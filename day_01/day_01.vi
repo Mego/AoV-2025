@@ -1,12 +1,46 @@
 
 // use #util::{...};
 
+fn parse(input: String) -> List[I32] {
+  input.split("\n").map(fn* (s: String) {
+    let (dir, val) = s.split_at(1);
+    let n = I32::parse(val).assume();
+    if dir == "L" {
+      -n
+    } else {
+      n
+    }
+  })
+}
+
 pub fn main(&io: &IO) {
-  let input = io.full_input();
+  let input = io.full_input().trim();
+
+  let directions = parse(input);
 
   let part1 = 0;
+  let part2 = 0;
+
+  let dial = +50;
+  for turn in directions.iter() {
+    let n = (turn.abs() as N32) / 100;
+    let m = turn % +100;
+    part2 += n;
+    let next = dial + m;
+    if dial != +0 and (next <= +0 or next > +99) {
+      part2 += 1;
+    }
+    dial = next;
+    while dial < +0 {
+      dial += +100;
+    }
+    dial %= +100;
+    if dial == +0 {
+      part1 += 1;
+    }
+  }
+
   io.println("Part 1: {part1}");
 
-  let part2 = 0;
   io.println("Part 2: {part2}");
 }
