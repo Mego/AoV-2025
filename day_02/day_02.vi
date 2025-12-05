@@ -1,12 +1,62 @@
 
 // use #util::{...};
+use #root::ops::range::{Bound::{Exclusive, Inclusive}, Range};
+
+fn parse(input: String) -> List[Range[Inclusive[N64], Exclusive[N64]]] {
+  input.split(",").map(fn* (s: String) {
+    let endpoints = s.split("-").map(fn* (x) { N64::parse(x).assume() });
+    let a = endpoints.pop_front().assume();
+    let b = endpoints.pop_front().assume();
+    a..(b + 1)
+  })
+}
+
+fn invalid_part1(n: N64) -> Bool {
+  let s = n as String;
+  if s.len() % 2 != 0 {
+    return false;
+  }
+  let mid = s.len() / 2;
+  let (a, b) = s.split_at(mid);
+  a == b
+}
+
+fn invalid_part2(n: N64) -> Bool {
+  let s = n as String;
+  let chars = s as List[Char];
+  for d in 1..(s.len() / 2 + 1) {
+    if s.len() % d != 0 {
+      continue;
+    }
+    let part = chars.slice(0..d) as String;
+    let rep = part.repeat(s.len() / d);
+    if rep == s {
+      return true;
+    }
+  }
+  false
+}
 
 pub fn main(&io: &IO) {
-  let input = io.full_input();
+  let input = io.full_input().trim();
+  let values = parse(input);
 
-  let part1 = 0;
+  let (part1, part2) = values.iter().fold(
+    (0 as N64, 0 as N64),
+    fn* ((a, b), r: Range[Inclusive[N64], Exclusive[N64]]) {
+      for n in r {
+        if invalid_part1(n) {
+          a += n;
+        }
+        if invalid_part2(n) {
+          b += n;
+        }
+      }
+
+      (a, b)
+    },
+  );
   io.println("Part 1: {part1}");
 
-  let part2 = 0;
   io.println("Part 2: {part2}");
 }
