@@ -23,19 +23,19 @@ pub fn main(&io: &IO) {
 
   let dial = +50;
   for turn in directions.iter() {
-    let n = (turn.abs() as N32) / 100;
-    let m = turn % +100;
-    part2 += n;
-    let next = dial + m;
-    if dial != +0 and (next <= +0 or next > +99) {
-      part2 += 1;
+    while turn.abs() > +0 {
+      let inc = if turn < +0 {
+        -1
+      } else {
+        +1
+      };
+      dial += inc;
+      turn -= inc;
+      if dial % +100 == +0 {
+        part2 += 1;
+      }
     }
-    dial = next;
-    while dial < +0 {
-      dial += +100;
-    }
-    dial %= +100;
-    if dial == +0 {
+    if dial % +100 == +0 {
       part1 += 1;
     }
   }
